@@ -3,7 +3,9 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CACHE_DIR = join(__dirname, 'sales_cache');
+// Sales/store cache. In the container this points at a mounted volume
+// (CACHE_DIR=/data) so a restart doesn't re-scrape every ZIP.
+const CACHE_DIR = process.env.CACHE_DIR || join(__dirname, 'sales_cache');
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 
 // Search terms that cover our ingredient list

@@ -1,0 +1,6 @@
+node_modules
+sales_cache
+npm-debug.log*
+.env
+.env.*
+.DS_Store

@@ -1,0 +1,11 @@
+{
+  "appId": "com.mealmaker.app",
+  "appName": "Meal Maker",
+  "webDir": "dist",
+  "backgroundColor": "#2a1a0e",
+  "ios": {
+    "contentInset": "never",
+    "preferredContentMode": "mobile",
+    "backgroundColor": "#2a1a0e"
+  }
+}

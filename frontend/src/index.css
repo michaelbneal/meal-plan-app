@@ -259,3 +259,36 @@ main {
   outline-offset: 2px;
   box-shadow: 0 0 0 1px rgba(234,162,33,0.4);
 }
+
+/* ─── iOS / Capacitor ─── */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  /* Keep content clear of the home indicator. The header handles the top inset. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overscroll-behavior-y: none;
+}
+
+/* Body background photo. Desktop pins it with background-attachment: fixed.
+   iOS WebKit ignores fixed attachment and instead stretches a `cover` image to
+   the full document height, so on touch WebKit we paint it on a fixed
+   pseudo-element behind the content instead. */
+.page-bg {
+  background: url(/herbs-bg.png) center / cover fixed;
+}
+@supports (-webkit-touch-callout: none) {
+  .page-bg {
+    background: none;
+  }
+  .page-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url(/herbs-bg.png) center / cover;
+  }
+}

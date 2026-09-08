@@ -8,7 +8,11 @@ import Recipes from './components/Recipes.jsx';
 import Pushpin, { CornerPins } from './components/Pushpin.jsx';
 import WashiTape from './components/WashiTape.jsx';
 
-const API = '/api';
+// Web dev leaves VITE_API_URL unset so '/api' hits the Vite proxy. The Capacitor
+// iOS build runs from capacitor://localhost, so it needs an absolute URL to the
+// backend container — set VITE_API_URL (see frontend/.env.example) before building.
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const API = `${API_BASE}/api`;
 
 // State grocery tax rates (2026) — many states exempt groceries entirely
 const STATE_GROCERY_TAX = {
@@ -660,7 +664,7 @@ export default function App() {
       {/* Header */}
       <header style={{
         borderBottom: '1px solid var(--chalk-border)',
-        padding: 'clamp(20px, 4vw, 36px) clamp(16px, 4vw, 40px) clamp(16px, 3vw, 32px)',
+        padding: 'calc(clamp(20px, 4vw, 36px) + env(safe-area-inset-top, 0px)) clamp(16px, 4vw, 40px) clamp(16px, 3vw, 32px)',
         position: 'relative',
         overflow: 'hidden',
         background: '#2a1a0e',
@@ -1303,13 +1307,7 @@ export default function App() {
       </header>
 
       {/* Body */}
-      <div style={{
-        position: 'relative',
-        backgroundImage: 'url(/herbs-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-      }}>
+      <div className="page-bg" style={{ position: 'relative' }}>
         {/* 60% fade overlay */}
         <div style={{
           position: 'absolute',
@@ -1331,7 +1329,7 @@ export default function App() {
             fontWeight: 700,
             fontFamily: 'JetBrains Mono, monospace',
           }}>
-            {error} — Make sure the backend is running on port 3001.
+            {error} — Make sure the backend is running and reachable at {API_BASE || 'this origin'}.
           </div>
         )}
 
@@ -1786,7 +1784,7 @@ export default function App() {
           aria-live="polite"
           style={{
             position: 'fixed',
-            bottom: 24,
+            bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 1000,
