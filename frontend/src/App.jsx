@@ -762,7 +762,7 @@ export default function App() {
             </div>
 
             {/* Location — city name from zip lookup */}
-            <p style={{
+            <p className="shopping-in" style={{
               fontFamily: 'Cormorant Garamond, serif',
               fontStyle: 'normal',
               fontSize: 26,
@@ -772,7 +772,7 @@ export default function App() {
               letterSpacing: '0.04em',
               textShadow: '1px 2px 3px rgba(0,0,0,0.4)',
             }}>
-              <span style={{ fontFamily: 'Pinyon Script, cursive', fontSize: 30, color: '#ffffff', textShadow: '2px 3px 0 #1a0e06, 3px 4px 6px rgba(0,0,0,0.45)' }}>Shopping in:</span>{' '}
+              <span className="shopping-in-label" style={{ fontFamily: 'Pinyon Script, cursive', fontSize: 30, color: '#ffffff', textShadow: '2px 3px 0 #1a0e06, 3px 4px 6px rgba(0,0,0,0.45)' }}>Shopping in:</span>{' '}
               {cityState === 'Not a valid US ZIP' || cityState === 'Lookup failed' ? (
                 <span style={{ color: '#e85a3a', fontStyle: 'italic', fontWeight: 700 }}>{cityState} · {zip}</span>
               ) : cityState ? (
@@ -811,9 +811,9 @@ export default function App() {
             {/* Taglines — ALL CAPS, wide tracking, marigold with tomato bullets */}
             <div className="taglines-row" style={{ display: 'flex', marginTop: 10, alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '8px 20px' }}>
               {['RECIPE PLANNER', 'DEAL-FINDER', 'BUDGET CALCULATOR'].map((tag, i) => (
-                <span key={tag} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span key={tag} className="tagline-item" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   {(
-                    <svg width="36" height="36" viewBox="0 0 32 36" style={{ flexShrink: 0, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))' }}>
+                    <svg className="tagline-icon" width="36" height="36" viewBox="0 0 32 36" style={{ flexShrink: 0, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))' }}>
                       {/* stem */}
                       <path d="M16 3 C16 3, 14 6, 16 7.5 C18 6, 16 3, 16 3Z" fill="#3a5a18" />
                       {/* calyx leaves */}
@@ -843,7 +843,7 @@ export default function App() {
                       <ellipse cx="19" cy="12" rx="2" ry="1.5" fill="white" opacity="0.1" transform="rotate(15,19,12)" />
                     </svg>
                   )}
-                  <span style={{
+                  <span className="tagline-text" style={{
                     fontFamily: 'Cormorant Garamond, serif',
                     fontSize: 26,
                     fontWeight: 700,
@@ -1043,8 +1043,8 @@ export default function App() {
                 if (v !== '' && parseInt(v) > 0) scheduleAdvance(e.target);
               }, type: 'number', min: 1, max: 15, width: 58, placeholder: '2' },
             ].map(({ label, value, setter, width, type, ...rest }) => (
-              <label key={label} style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start', borderRight: '1px solid rgba(220,200,160,0.32)', paddingRight: 18 }}>
-                <span style={{
+              <label key={label} className="control-field" style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start', borderRight: '1px solid rgba(220,200,160,0.32)', paddingRight: 18 }}>
+                <span className="control-label" style={{
                   fontFamily: 'Amatic SC, cursive',
                   fontSize: 26,
                   fontWeight: 700,
@@ -1063,6 +1063,7 @@ export default function App() {
                 </span>
                 {type === 'select' ? (
                   <select
+                    className="control-input"
                     value={radius}
                     onChange={e => { setRadius(parseInt(e.target.value)); scheduleAdvance(e.target, 120); }}
                     onKeyDown={handleControlKey}
@@ -1087,6 +1088,7 @@ export default function App() {
                   </select>
                 ) : (
                   <input
+                    className="control-input"
                     value={value}
                     onChange={setter}
                     onKeyDown={handleControlKey}
@@ -1110,8 +1112,8 @@ export default function App() {
               </label>
             ))}
             {/* Preferred store selector */}
-            <label style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start', borderRight: '1px solid rgba(220,200,160,0.32)', paddingRight: 18 }}>
-              <span style={{
+            <label className="control-field" style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start', borderRight: '1px solid rgba(220,200,160,0.32)', paddingRight: 18 }}>
+              <span className="control-label" style={{
                 fontFamily: 'Amatic SC, cursive',
                 fontSize: 26,
                 fontWeight: 700,
@@ -1129,6 +1131,7 @@ export default function App() {
                 MY{'\n'}STORE
               </span>
               <select
+                className="control-input"
                 value={preferredStore}
                 onChange={e => { setPreferredStore(e.target.value); scheduleAdvance(e.target, 120); }}
                 onKeyDown={handleControlKey}
@@ -1164,8 +1167,8 @@ export default function App() {
             </label>
 
             {/* Skill level selector — last in row, no trailing divider */}
-            <label style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start' }}>
-              <span style={{
+            <label className="control-field" style={{ display: 'flex', flexDirection: 'column', gap: 9, alignItems: 'center', justifyContent: 'flex-start' }}>
+              <span className="control-label" style={{
                 fontFamily: 'Amatic SC, cursive',
                 fontSize: 26,
                 fontWeight: 700,
@@ -1183,6 +1186,7 @@ export default function App() {
                 SKILL{'\n'}LEVEL
               </span>
               <select
+                className="control-input"
                 value={difficulty}
                 onChange={e => {
                   setDifficulty(e.target.value);
@@ -1219,8 +1223,9 @@ export default function App() {
               </select>
             </label>
 
-            <div style={{ flexBasis: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', marginTop: 6 }}>
+            <div className="controls-cta" style={{ flexBasis: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', marginTop: 6 }}>
               <button
+                className="cta-button"
                 ref={ctaButtonRef}
                 onClick={async () => {
                   if (mode === 'deals') {
@@ -1454,7 +1459,7 @@ export default function App() {
                 lineHeight: 1.6,
                 textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
               }}>
-                <strong style={{
+                <strong className="craving-title" style={{
                   display: 'block',
                   marginBottom: 6,
                   color: '#eaa221',

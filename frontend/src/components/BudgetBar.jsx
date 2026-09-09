@@ -65,7 +65,7 @@ export default function BudgetBar({ weeklyTotal, budget, taxRate = 0 }) {
       <CornerPins />
 
       {/* Left — weekly total */}
-      <div style={{
+      <div className="budget-left" style={{
         borderRight: '2px solid rgba(255,255,255,0.15)',
         paddingRight: 32,
         marginRight: 32,
@@ -167,7 +167,7 @@ export default function BudgetBar({ weeklyTotal, budget, taxRate = 0 }) {
       </div>
 
       {/* Right — delta */}
-      <div style={{
+      <div className="budget-right" style={{
         textAlign: 'right',
         borderLeft: '2px solid rgba(255,255,255,0.15)',
         paddingLeft: 32,

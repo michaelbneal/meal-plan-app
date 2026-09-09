@@ -131,16 +131,60 @@ main {
   40%           { opacity: 1;    transform: translateY(-3px); }
 }
 
-/* ─── Responsive ─── */
+/* ─── Responsive ───
+   Sizing per device class, from the "Meal Maker iOS Layout" canvas. Inline styles
+   in the components are the desktop values; these rules override them by class,
+   so `!important` is deliberate. Blocks are ordered widest → narrowest so each
+   narrower block wins over the one above it.
+   Cell classes (cell-d0..6 = day, cell-m0..2 = meal) come from MealPlan.jsx. */
 
+/* iPad landscape and small desktops (≤1200): the 13vw title hits 153px here and
+   the 220px label column squeezes the 7 day cards to ~125px. */
+@media (max-width: 1200px) {
+  .app-title { font-size: 120px !important; }
+  .fresh-ideas { font-size: 32px !important; }
+  .tagline-text { font-size: 20px !important; }
+  .tagline-icon { width: 32px; height: 32px; }
+  .meal-grid { grid-template-columns: 160px repeat(7, minmax(0, 1fr)) !important; gap: 6px !important; }
+  .meal-grid .day-header { font-size: 26px !important; }
+  .row-label-text { font-size: 30px !important; }
+  .row-label svg { width: 24px; height: 24px; }
+  .meal-card { padding: 40px 12px 10px !important; }
+  .meal-card-name { font-size: 16px !important; }
+  .meal-card-price { font-size: 26px !important; }
+  .day-total-text { font-size: 16px !important; letter-spacing: 0.2em !important; }
+  .day-total-cell { padding: 16px 8px !important; }
+  .day-total-value { font-size: 30px !important; }
+}
+
+@media (max-width: 1100px) {
+  .taglines-row { justify-content: flex-start !important; gap: 8px 28px !important; }
+}
+
+/* iPad portrait (≤900). Controls become a 4 + 2 grid; the meal grid is
+   TRANSPOSED — one row per day, columns Breakfast · Lunch · Dinner · Total. */
 @media (max-width: 900px) {
+  .app-title { font-size: 13vw !important; }
+  .fresh-ideas { font-size: 28px !important; }
+  .tagline-icon { width: 30px; height: 30px; }
   .header-inner {
     flex-direction: column !important;
     align-items: flex-start !important;
   }
+
   .controls-panel {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px !important;
     width: 100%;
   }
+  .control-field { border-right: none !important; padding-right: 0 !important; width: 100%; }
+  .control-field:nth-of-type(5), .control-field:nth-of-type(6) { grid-column: span 2; }
+  .control-label { font-size: 24px !important; min-height: 0 !important; white-space: nowrap !important; line-height: 1.1 !important; }
+  .control-input { width: 100% !important; height: 46px; font-size: 20px !important; box-sizing: border-box; padding: 0 10px !important; }
+  .controls-cta { grid-column: 1 / -1; margin-top: 4px !important; }
+  .cta-button { min-width: 340px !important; }
+
   .budget-bar {
     grid-template-columns: 1fr 1fr !important;
     gap: 16px !important;
@@ -150,41 +194,57 @@ main {
     grid-column: 1 / -1;
     order: -1;
   }
-  .tabs-row {
-    flex-wrap: wrap !important;
-  }
+  .budget-left, .budget-right { border: none !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+
+  .tabs-row { flex-wrap: wrap !important; }
+  .tabs-row [role="tab"] { font-size: 18px !important; padding: 10px 14px !important; }
   .tabs-status {
     margin-left: 0 !important;
     width: 100%;
     padding-top: 6px !important;
     padding-bottom: 6px !important;
   }
-  .grocery-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .meal-grid {
-    grid-template-columns: 1fr 1fr !important;
-    min-width: 0 !important;
-  }
+  .grocery-grid { grid-template-columns: 1fr !important; }
+
+  .meal-grid { grid-template-columns: 72px repeat(3, minmax(0, 1fr)) 92px !important; gap: 8px !important; }
+  .meal-grid .corner { grid-row: 1; grid-column: 1; }
   .meal-grid .day-header {
-    display: none !important;
+    grid-column: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    border-bottom: none !important;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 26px !important;
   }
   .meal-grid .row-label {
-    grid-column: 1 / -1;
-    justify-content: flex-start !important;
-    padding: 12px 0 4px !important;
+    grid-row: 1;
+    justify-content: center !important;
+    padding: 6px 0 14px !important;
+    border-bottom: 1px solid var(--chalk-border);
   }
+  .row-label-text { font-size: 34px !important; }
+  .row-label svg { width: 26px; height: 26px; }
+  .meal-card { padding: 42px 14px 12px !important; }
+  .meal-card-name { font-size: 17px !important; }
   .meal-grid .day-total-label {
-    grid-column: 1 / -1;
-    justify-content: flex-start !important;
-    padding: 12px 0 4px !important;
+    grid-row: 1;
+    grid-column: 5;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    padding: 0 0 14px !important;
+    border-bottom: 1px solid var(--chalk-border);
   }
-  .meal-grid .corner {
-    display: none !important;
-  }
-  .card-day-label {
-    display: block !important;
-  }
+  .day-total-text { font-size: 14px !important; letter-spacing: 0.2em !important; text-decoration: none !important; text-align: center; }
+  .day-total-cell { grid-column: 5; padding: 12px 6px !important; }
+  .day-total-value { font-size: 30px !important; }
+  /* explicit placement */
+  .cell-d0 { grid-row: 2; } .cell-d1 { grid-row: 3; } .cell-d2 { grid-row: 4; } .cell-d3 { grid-row: 5; }
+  .cell-d4 { grid-row: 6; } .cell-d5 { grid-row: 7; } .cell-d6 { grid-row: 8; }
+  .meal-card.cell-m0 { grid-column: 2; } .meal-card.cell-m1 { grid-column: 3; } .meal-card.cell-m2 { grid-column: 4; }
+  .row-label.cell-m0 { grid-column: 2; } .row-label.cell-m1 { grid-column: 3; } .row-label.cell-m2 { grid-column: 4; }
 }
 
 /* Hover affordance for inactive tabs — inline styles can't express :hover.
@@ -195,24 +255,30 @@ main {
   border-color: rgba(240, 232, 218, 0.3) !important;
 }
 
+/* Phones (≤700). Header reflows, controls are a 2-column grid, tabs become a
+   scroll strip, and the meal grid is two cards wide in natural order. */
 @media (max-width: 700px) {
-  /* Header was designed desktop-first with fixed font sizes and no-wrap rows.
-     Below ~700px the title clipped, the taglines overflowed, and the mode cards
-     squished to one word per line. These rules let the header reflow. */
-  .mode-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .taglines-row {
-    justify-content: flex-start !important;
-    gap: 6px 18px !important;
-  }
-  .fresh-ideas {
-    margin-left: 0 !important;
-    margin-top: 4px !important;
-  }
-  /* Tabs: the 26px serif tabs each wrapped to their own line on a phone, so you
-     scrolled past 5 stacked tabs to reach content. Switch to a single horizontal
-     scroll strip (standard mobile pattern) with tighter sizing. */
+  .app-title { font-size: 60px !important; }
+  .fresh-ideas { font-size: 20px !important; letter-spacing: 0.3em !important; margin-left: 0 !important; margin-top: 4px !important; }
+  .shopping-in { font-size: 20px !important; }
+  .shopping-in-label { font-size: 24px !important; }
+  .taglines-row { flex-direction: column; align-items: flex-start !important; gap: 6px !important; }
+  .tagline-item { gap: 10px !important; }
+  .tagline-text { font-size: 16px !important; }
+  .tagline-icon { width: 22px; height: 22px; }
+  .mode-grid { grid-template-columns: 1fr !important; }
+
+  .controls-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px !important; padding: 18px 16px 20px !important; }
+  .control-field:nth-of-type(5), .control-field:nth-of-type(6) { grid-column: auto; }
+  .control-label { font-size: 18px !important; }
+  .control-input { height: 44px; font-size: 18px !important; }
+  .cta-button { width: 100%; min-width: 0 !important; height: 56px !important; font-size: 22px !important; }
+
+  .budget-bar { grid-template-columns: 1fr !important; text-align: center; }
+  .budget-bar > div { text-align: center !important; }
+  .budget-bar-center { order: 0; margin: 6px 0; }
+
+  /* Tabs: single horizontal scroll strip. */
   .tabs-row {
     flex-wrap: nowrap !important;
     overflow-x: auto;
@@ -223,33 +289,43 @@ main {
   .tabs-row::-webkit-scrollbar { display: none; }
   .tabs-row [role="tab"] {
     flex: 0 0 auto;
-    font-size: 16px !important;
+    font-size: 14px !important;
     letter-spacing: 0.1em !important;
     padding: 8px 12px !important;
     margin-right: 4px !important;
     white-space: nowrap;
   }
-  /* The "N deals nearby · Serves" status can't sit in a no-wrap scroll row;
-     it's redundant with the Deals tab and the plan header, so drop it on mobile. */
-  .tabs-status {
-    display: none !important;
+  .tabs-status { display: none !important; }
+
+  .craving-title { font-size: 24px !important; }
+
+  .meal-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .meal-grid .corner { display: none !important; }
+  .meal-grid .day-header { display: none !important; }
+  .meal-grid .row-label, .meal-grid .day-total-label {
+    grid-column: 1 / -1 !important;
+    grid-row: auto;
+    justify-content: flex-start !important;
+    padding: 12px 0 4px !important;
+    border-bottom: none;
   }
+  .row-label-text { font-size: 30px !important; }
+  .row-label svg { width: 24px; height: 24px; }
+  .meal-card, .day-total-cell { grid-row: auto; grid-column: auto !important; }
+  .meal-card { padding: 36px 12px 10px !important; min-height: 150px !important; }
+  .meal-card-name { font-size: 16px !important; }
+  .meal-card-price { font-size: 26px !important; }
+  .meal-card-star { font-size: 26px !important; }
+  .meal-card-fav-label { font-size: 16px !important; }
+  .meal-card-actions button { padding: 4px 8px !important; }
+  .card-day-label { display: block !important; }
+  .day-total-text { font-size: 20px !important; letter-spacing: 0.2em !important; text-decoration: underline !important; }
+  .day-total-cell { padding: 14px !important; }
+  .day-total-value { font-size: 30px !important; }
 }
 
 @media (max-width: 600px) {
-  .header-inner {
-    padding: 24px 16px 20px !important;
-  }
-  .meal-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .budget-bar {
-    grid-template-columns: 1fr !important;
-    text-align: center;
-  }
-  .budget-bar > div {
-    text-align: center !important;
-  }
+  .header-inner { padding: 24px 16px 20px !important; }
 }
 
 /* Focus indicator for controls panel — overrides the inline outline:none so users can see keyboard focus */

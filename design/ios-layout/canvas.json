@@ -1,0 +1,54 @@
+{
+  "artboards": [
+    {
+      "file": "iPhone.dc.html",
+      "title": "iPhone · 390×844",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 6000
+    },
+    {
+      "file": "Main.dc.html",
+      "title": "iPad portrait · 820×1180",
+      "x": 810,
+      "y": 0,
+      "w": 820,
+      "h": 4300
+    },
+    {
+      "file": "iPadLandscape.dc.html",
+      "title": "iPad landscape · 1180×820",
+      "x": 2050,
+      "y": 0,
+      "w": 1180,
+      "h": 2650
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-phone",
+      "x": 430,
+      "y": 0,
+      "w": 250,
+      "text": "iPhone 390pt — proposed vs today\n\nHeader\n• Title 60px (today clamps to 52)\n• Fresh Ideas 20px, tracking .30em (was 24 / .38em → wrapped)\n• Taglines stacked, 16px, 22px tomato (was a 26px row that wrapped mid-word)\n• Shopping-in 24/20px (was 30/26)\n• Header top padding + 59pt safe-area inset\n\nControls\n• 2-column grid, single-line labels 18px (was flex-wrap with 26px two-line labels and dividers)\n• Every control 44pt tall, full column width\n• Plan My Week full width, 56pt\n• Note the dashed line: on an iPhone the first screen ends inside the controls panel, so Plan My Week is below the fold. Collapsing the Welcome panel after the first visit would bring it up.\n\nBody\n• Budget bar stacked + centered, price 48px (matches ≤600 rule)\n• Tabs 14px scroll strip (unchanged)\n• Craving headline 24px (was 32)\n• Meal grid 2 columns (today 1 col below 600px). Card padding 36 12 10, min-height 150, name 16, price 26, star 26. Day name inside the card."
+    },
+    {
+      "id": "note-ipad-portrait",
+      "x": 1670,
+      "y": 0,
+      "w": 250,
+      "text": "iPad portrait 820pt — proposed vs today\n\nHeader\n• Title 104px (13vw — unchanged), Fresh Ideas 28px\n• Taglines single row 20px, 30px tomato (was 26px and wrapped)\n• 3 mode cards (unchanged)\n• 24pt safe-area inset on top\n\nControls\n• Row 1: ZIP · RADIUS · BUDGET · SERVINGS as a 4-col grid\n• Row 2: MY STORE · SKILL LEVEL as a 2-col grid\n• Single-line labels 24px, controls 46pt, no vertical dividers\n• Plan My Week centered, 340pt min\n\nBody\n• Budget bar keeps today's ≤900px layout: bar on top, cost left / delta right. (I tried the desktop 3-part row — the center bar collapses at 820.)\n• Taglines left-aligned so the wrap to a second line reads as intended. They repeat the three mode-card names; dropping them on tablets is an option.\n• Tabs 18px with status text\n• Meal grid TRANSPOSED: one row per day, columns Breakfast · Lunch · Dinner · Total. Day name runs vertically in a 96pt gutter. Cards ~186pt wide, padding 42 14 12.\n  Today: 2-col mobile layout → 21 cards in 11 rows with no day headers."
+    },
+    {
+      "id": "note-ipad-landscape",
+      "x": 3270,
+      "y": 0,
+      "w": 250,
+      "text": "iPad landscape 1180pt — proposed vs today\n\nHeader\n• Title capped at 120px (13vw gives 153 — dominates the screen)\n• Fresh Ideas 32px\n• Taglines 20px single row (was 26px, wrapped to 2 lines)\n\nControls\n• Desktop single row unchanged, labels 26px\n\nBody\n• Budget bar desktop layout (unchanged)\n• Meal grid keeps days-as-columns. Label column 160pt (was 220), Pinyon 30 (was 42), gap 6 (was 8). Cards land at ~133pt: padding 40 12 10, name 16, price 26. Day headers 26px.\n  Today: 220pt label column squeezes cards to ~125pt and the $ price barely fits.\n• Daily totals 30px Bebas (was 38)"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

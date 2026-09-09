@@ -49,12 +49,15 @@ function fitFontSize(name, base, min, maxChars) {
   return Math.max(min, Math.round((base * maxChars) / longest));
 }
 
-function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggleSkip, onMealClick, onNeverAgain, isFavorite = false, onToggleFavoriteRecipe }) {
+function MealCard({ meal, mealType, day, dayIdx = 0, mealIdx = 0, taxRate = 0, isSkipped = false, onToggleSkip, onMealClick, onNeverAgain, isFavorite = false, onToggleFavoriteRecipe }) {
   const wt = (v) => Math.round(v * (1 + taxRate) * 100) / 100;
   const { accent, bg } = MEAL_CONFIG[mealType];
+  // cell-d*/cell-m* let the tablet stylesheet place each card explicitly
+  // (rows = days, columns = meals) without changing DOM order. See index.css.
+  const cellClass = `meal-card cell-d${dayIdx} cell-m${mealIdx}`;
 
   if (!meal) return (
-    <div style={{
+    <div className={cellClass} style={{
       ...cardBase,
       opacity: 0.5,
       border: '2px dashed #6b4e2e',
@@ -62,7 +65,7 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
   );
 
   if (isSkipped) return (
-    <div style={{
+    <div className={cellClass} style={{
       ...cardBase,
       border: '2px dashed #6b4e2e',
       display: 'flex',
@@ -105,6 +108,7 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
 
   return (
     <div
+      className={cellClass}
       onClick={() => onMealClick?.(day, mealType)}
       role="button"
       tabIndex={0}
@@ -205,8 +209,8 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
             onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <span style={{ fontSize: 34 }}>{isFavorite ? '★' : '☆'}</span>
-            <span style={{
+            <span className="meal-card-star" style={{ fontSize: 34 }}>{isFavorite ? '★' : '☆'}</span>
+            <span className="meal-card-fav-label" style={{
               fontFamily: 'Amatic SC, cursive',
               fontWeight: 700,
               fontSize: 18,
@@ -220,7 +224,7 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
       )}
 
       {/* Meal name */}
-      <p style={{
+      <p className="meal-card-name" style={{
         fontFamily: 'Cormorant Garamond, serif',
         fontSize: fitFontSize(meal.name, 18, 11, 9),
         fontWeight: 700,
@@ -246,7 +250,7 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
       </div>
 
       {/* Cost */}
-      <div style={{
+      <div className="meal-card-price" style={{
         fontFamily: 'Bebas Neue, sans-serif',
         fontSize: 30,
         fontWeight: 900,
@@ -261,7 +265,7 @@ function MealCard({ meal, mealType, day, taxRate = 0, isSkipped = false, onToggl
       </div>
 
       {/* Action buttons */}
-      <div style={{ display: 'flex', gap: 6, alignSelf: 'flex-end', marginTop: 4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+      <div className="meal-card-actions" style={{ display: 'flex', gap: 6, alignSelf: 'flex-end', marginTop: 4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
         <button
           onClick={e => { e.stopPropagation(); onToggleSkip?.(); }}
           style={{
@@ -390,8 +394,8 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
         <div className="corner" />
 
         {/* Day headers */}
-        {days.map(day => (
-          <div key={day} className="day-header" style={{
+        {days.map((day, di) => (
+          <div key={day} className={`day-header cell-d${di}`} style={{
             textAlign: 'center',
             fontFamily: 'Amatic SC, cursive',
             fontSize: 28,
@@ -408,10 +412,10 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
         ))}
 
         {/* Meal rows */}
-        {MEAL_TYPES.map(type => (
+        {MEAL_TYPES.map((type, mi) => (
           <Fragment key={type}>
             {/* Row label */}
-            <div className="row-label" style={{
+            <div className={`row-label cell-m${mi}`} style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-start',
@@ -419,7 +423,7 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
               overflow: 'visible',
               whiteSpace: 'nowrap',
             }}>
-              <span style={{
+              <span className="row-label-text" style={{
                 fontFamily: 'Pinyon Script, cursive',
                 fontSize: 42,
                 fontWeight: 400,
@@ -437,8 +441,8 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
                 {MEAL_CONFIG[type].label}
               </span>
             </div>
-            {days.map(day => (
-              <MealCard key={`${day}-${type}`} meal={plan[day][type]} mealType={type} day={day} taxRate={taxRate} isSkipped={!!skippedMeals[`${day}-${type}`]} onToggleSkip={() => onToggleSkip?.(`${day}-${type}`)} onMealClick={onMealClick} onNeverAgain={onNeverAgain} isFavorite={!!plan[day][type]?.id && favoriteSet.has(plan[day][type].id)} onToggleFavoriteRecipe={onToggleFavoriteRecipe} />
+            {days.map((day, di) => (
+              <MealCard key={`${day}-${type}`} meal={plan[day][type]} mealType={type} day={day} dayIdx={di} mealIdx={mi} taxRate={taxRate} isSkipped={!!skippedMeals[`${day}-${type}`]} onToggleSkip={() => onToggleSkip?.(`${day}-${type}`)} onMealClick={onMealClick} onNeverAgain={onNeverAgain} isFavorite={!!plan[day][type]?.id && favoriteSet.has(plan[day][type].id)} onToggleFavoriteRecipe={onToggleFavoriteRecipe} />
             ))}
           </Fragment>
         ))}
@@ -450,7 +454,7 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
           justifyContent: 'flex-end',
           paddingRight: 10,
         }}>
-          <span style={{
+          <span className="day-total-text" style={{
             fontFamily: 'Cormorant Garamond, serif', textTransform: 'uppercase',
             fontSize: 26,
             fontWeight: 700,
@@ -463,8 +467,8 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
             Daily Totals:
           </span>
         </div>
-        {days.map(day => (
-          <div key={`total-${day}`} style={{
+        {days.map((day, di) => (
+          <div key={`total-${day}`} className={`day-total-cell cell-d${di}`} style={{
             background: 'linear-gradient(180deg, #ffffff 0%, #f8f4ec 50%, #efe8da 100%)',
             border: '1px solid #8a6238',
             borderTop: '2px solid rgba(255,255,255,0.8)',
@@ -476,7 +480,7 @@ export default function MealPlan({ plan, taxRate = 0, skippedMeals = {}, onToggl
             justifyContent: 'center',
             boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.08), 4px 6px 14px rgba(0,0,0,0.4), 8px 10px 24px rgba(0,0,0,0.2), 2px 3px 6px rgba(0,0,0,0.25)',
           }}>
-            <span style={{
+            <span className="day-total-value" style={{
               fontFamily: 'Bebas Neue, sans-serif',
               fontSize: 38,
               fontWeight: 900,
