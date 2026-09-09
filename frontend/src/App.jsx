@@ -13,6 +13,12 @@ import WashiTape from './components/WashiTape.jsx';
 // backend container — set VITE_API_URL (see frontend/.env.example) before building.
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 const API = `${API_BASE}/api`;
+// Shared secret for the hosted (AWS) backend. Empty for local/LAN builds.
+const API_KEY = import.meta.env.VITE_API_KEY || '';
+const apiFetch = (url, init = {}) => fetch(url, {
+  ...init,
+  headers: { ...(init.headers || {}), ...(API_KEY ? { 'x-api-key': API_KEY } : {}) },
+});
 
 // State grocery tax rates (2026) — many states exempt groceries entirely
 const STATE_GROCERY_TAX = {
@@ -283,7 +289,7 @@ export default function App() {
     setError(null);
     setSalesData(null);
     try {
-      const res = await fetch(`${API}/sales?zip=${zip}&refresh=${refresh}&radius=${radius}`);
+      const res = await apiFetch(`${API}/sales?zip=${zip}&refresh=${refresh}&radius=${radius}`);
       const data = await res.json();
       salesFromUserActionRef.current = true;
       setSalesData(data);
@@ -317,9 +323,9 @@ export default function App() {
     setSalesData(null);
     try {
       const [planRes, grocRes, salesRes] = await Promise.all([
-        fetch(`${API}/meal-plan?zip=${zip}&budget=${budget}&servings=${servings}&refresh=${refresh}&radius=${radius}&variation=${v}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${excludeRecipesParam}${cuisinesParam}${favRecipesParam}${budgetParam}`),
-        fetch(`${API}/grocery-list?zip=${zip}&budget=${budget}&servings=${servings}&radius=${radius}&variation=${v}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${excludeRecipesParam}${cuisinesParam}${favRecipesParam}${budgetParam}`),
-        fetch(`${API}/sales?zip=${zip}&refresh=${refresh}&radius=${radius}`)
+        apiFetch(`${API}/meal-plan?zip=${zip}&budget=${budget}&servings=${servings}&refresh=${refresh}&radius=${radius}&variation=${v}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${excludeRecipesParam}${cuisinesParam}${favRecipesParam}${budgetParam}`),
+        apiFetch(`${API}/grocery-list?zip=${zip}&budget=${budget}&servings=${servings}&radius=${radius}&variation=${v}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${excludeRecipesParam}${cuisinesParam}${favRecipesParam}${budgetParam}`),
+        apiFetch(`${API}/sales?zip=${zip}&refresh=${refresh}&radius=${radius}`)
       ]);
       if (!planRes.ok) throw new Error('Failed to load meal plan');
       setPlanData(await planRes.json());
@@ -331,7 +337,7 @@ export default function App() {
       salesFromUserActionRef.current = true;
       setSalesData(await salesRes.json());
       // Fetch recipe pool for skip/replace (filtered by current difficulty)
-      fetch(`${API}/recipes?zip=${zip}&servings=${servings}&radius=${radius}${excludeParam}${favParam}${customParam}${diffParam}${excludeRecipesParam}${cuisinesParam}`)
+      apiFetch(`${API}/recipes?zip=${zip}&servings=${servings}&radius=${radius}${excludeParam}${favParam}${customParam}${diffParam}${excludeRecipesParam}${cuisinesParam}`)
         .then(r => r.json()).then(setRecipePool).catch(() => {});
     } catch (err) {
       setError(err.message);
@@ -381,8 +387,8 @@ export default function App() {
     const storeParam = preferredStore ? `&store=${encodeURIComponent(preferredStore)}` : '';
     try {
       const [planRes, grocRes] = await Promise.all([
-        fetch(`${API}/meal-plan?zip=${zip}&servings=${servings}&radius=${radius}${idsParam}${onHandParam}${storeParam}`),
-        fetch(`${API}/grocery-list?zip=${zip}&servings=${servings}&radius=${radius}${idsParam}${onHandParam}${storeParam}`),
+        apiFetch(`${API}/meal-plan?zip=${zip}&servings=${servings}&radius=${radius}${idsParam}${onHandParam}${storeParam}`),
+        apiFetch(`${API}/grocery-list?zip=${zip}&servings=${servings}&radius=${radius}${idsParam}${onHandParam}${storeParam}`),
       ]);
       if (!planRes.ok) throw new Error('Failed to load saved menu');
       setPlanData(await planRes.json());
@@ -397,13 +403,13 @@ export default function App() {
   }
 
   useEffect(() => {
-    fetch(`${API}/ingredients`)
+    apiFetch(`${API}/ingredients`)
       .then(r => r.json())
       .then(data => { console.log('INGREDIENTS LOADED:', data.length); setAllIngredients(data); })
       .catch(err => console.error('INGREDIENTS FAILED:', err));
     // Pre-fetch sales so store dropdown is populated — only if user has a valid ZIP.
     if (zip.length === 5) {
-      fetch(`${API}/sales?zip=${zip}&refresh=false&radius=${radius}`)
+      apiFetch(`${API}/sales?zip=${zip}&refresh=false&radius=${radius}`)
         .then(r => r.json())
         .then(data => { if (!salesData) setSalesData(data); })
         .catch(() => {});
@@ -437,7 +443,7 @@ export default function App() {
     setSalesData(null);
     setPreferredStore('');
     setSalesLoading(true);
-    fetch(`${API}/sales?zip=${zip}&refresh=false&radius=${radius}`)
+    apiFetch(`${API}/sales?zip=${zip}&refresh=false&radius=${radius}`)
       .then(r => r.json())
       .then(data => {
         if (cancelled) return;
@@ -1669,9 +1675,9 @@ export default function App() {
               setSkippedMeals({});
               setReplacements({});
               Promise.all([
-                fetch(`${API}/meal-plan?zip=${zip}&budget=${budget}&servings=${servings}&refresh=false&radius=${radius}&variation=${variation}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${params(next)}`).then(r => r.json()),
-                fetch(`${API}/grocery-list?zip=${zip}&servings=${servings}&radius=${radius}&variation=${variation}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${params(next)}`).then(r => r.json()),
-                fetch(`${API}/recipes?zip=${zip}&servings=${servings}&radius=${radius}${excludeParam}${favParam}${customParam}${diffParam}${params(next)}`).then(r => r.json()),
+                apiFetch(`${API}/meal-plan?zip=${zip}&budget=${budget}&servings=${servings}&refresh=false&radius=${radius}&variation=${variation}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${params(next)}`).then(r => r.json()),
+                apiFetch(`${API}/grocery-list?zip=${zip}&servings=${servings}&radius=${radius}&variation=${variation}${excludeParam}${onHandParam}${favParam}${customParam}${storeParam}${diffParam}${params(next)}`).then(r => r.json()),
+                apiFetch(`${API}/recipes?zip=${zip}&servings=${servings}&radius=${radius}${excludeParam}${favParam}${customParam}${diffParam}${params(next)}`).then(r => r.json()),
               ]).then(([plan, groc, pool]) => {
                 setPlanData(plan);
                 setGroceryData(groc);

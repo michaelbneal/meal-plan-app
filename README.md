@@ -30,6 +30,19 @@ On OrbStack the container also gets automatic local domains, usable from the Mac
 
 To run the API without Docker: `cd backend && npm install && npm run dev`.
 
+## Deploy the backend to AWS (App Runner)
+
+One script builds the image for linux/amd64, pushes it to ECR, and creates or updates an App Runner service with an HTTPS URL. Needs the AWS CLI configured (`aws configure` or `aws sso login`) and Docker running.
+
+```bash
+API_KEY=$(openssl rand -hex 24) npm run deploy:aws     # first deploy — save the key
+API_KEY=<same key> npm run deploy:aws                  # every later deploy
+```
+
+The service runs on the smallest instance (0.25 vCPU, 0.5 GB), health-checks `/api/health`, and requires the `X-Api-Key` header on every other route because the URL is public. The sales cache is per-instance and rebuilt after a deploy, which is fine for a 12-hour TTL. Files: `infra/aws/deploy.sh`, `infra/aws/apprunner-ecr-trust.json`.
+
+To point the iOS app at it, set `VITE_API_URL` to the service URL and `VITE_API_KEY` to the key in `frontend/.env.ios.local`, then `npm run ios:sync`. HTTPS to App Runner passes iOS App Transport Security without any plist change.
+
 ## Run the web UI (dev)
 
 ```bash
@@ -56,7 +69,7 @@ Re-run `npm run ios:sync` after any web change or after changing `VITE_API_URL`.
 
 ### What the iOS wrapper changes
 
-- `frontend/capacitor.config.json` — app id `com.mealmaker.app`, web dir `dist`, dark background, no automatic content inset (the header extends under the status bar and uses `env(safe-area-inset-top)`).
+- `frontend/capacitor.config.json` — app id `com.mealmakerpro.app`, web dir `dist`, dark background, no automatic content inset (the header extends under the status bar and uses `env(safe-area-inset-top)`).
 - `frontend/ios/App/App/Info.plist` — `NSAllowsLocalNetworking` so the app may call the container over plain HTTP on the LAN (everything else stays HTTPS-only), `NSLocalNetworkUsageDescription` for the iOS local-network prompt, and a light status-bar style.
 - `frontend/src/index.css` — safe-area padding, tap-highlight and text-size-adjust fixes, and a fixed pseudo-element background photo because iOS WebKit ignores `background-attachment: fixed`.
 - `frontend/src/App.jsx` — API base URL from `VITE_API_URL` (set per build mode, see above); header and toast respect safe-area insets.

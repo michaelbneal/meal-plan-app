@@ -12,6 +12,7 @@
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f api",
     "ios:sync": "npm run ios:sync --prefix frontend",
-    "ios:open": "npm run ios:open --prefix frontend"
+    "ios:open": "npm run ios:open --prefix frontend",
+    "deploy:aws": "bash infra/aws/deploy.sh"
   }
 }

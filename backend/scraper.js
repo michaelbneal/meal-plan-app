@@ -434,6 +434,12 @@ async function searchFlipp(query, zip) {
   }
 }
 
+// One scrape per (zip, radius) at a time. The frontend fires the meal-plan,
+// grocery-list and sales requests together, so on a cold cache the same ZIP
+// used to be scraped three times in parallel (~100 Flipp calls). Concurrent
+// callers now share the first request's promise.
+const inFlight = new Map();
+
 export async function getSales(zip = '64683', forceRefresh = false, radiusMiles = 30) {
   if (!forceRefresh) {
     const cached = loadCache(zip, radiusMiles);
@@ -442,7 +448,17 @@ export async function getSales(zip = '64683', forceRefresh = false, radiusMiles 
       return cached;
     }
   }
+  const key = cacheKey(zip, radiusMiles);
+  if (inFlight.has(key)) {
+    console.log(`[flipp] Joining in-flight scrape for ${zip} (${radiusMiles}mi)`);
+    return inFlight.get(key);
+  }
+  const pending = fetchSales(zip, radiusMiles).finally(() => inFlight.delete(key));
+  inFlight.set(key, pending);
+  return pending;
+}
 
+async function fetchSales(zip, radiusMiles) {
   console.log(`[flipp] Fetching deals within ${radiusMiles}mi of ZIP ${zip}...`);
 
   // Step 1: Find actual store locations within radius.

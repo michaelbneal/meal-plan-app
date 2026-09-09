@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  html,body{margin:0;width:1024px;height:1024px;overflow:hidden}
+  body{background:#2a1a0e;position:relative}
+  /* header-photo warmth: same overlay tones as the app header */
+  .glow{position:absolute;inset:0;background:
+    radial-gradient(ellipse at 38% 30%, rgba(234,162,33,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(120,40,20,0.35) 0%, transparent 60%),
+    linear-gradient(180deg, #3a2412 0%, #2a1a0e 55%, #1a0e06 100%)}
+  .tomato{position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);filter:drop-shadow(0 30px 40px rgba(0,0,0,0.6)) drop-shadow(0 8px 12px rgba(0,0,0,0.5))}
+  .rim{position:absolute;inset:0;box-shadow:inset 0 0 180px rgba(0,0,0,0.55)}
+</style></head><body>
+<div class="glow"></div>
+<!-- Heirloom tomato from MealPlan.jsx TomatoBullet, enlarged -->
+<svg class="tomato" width="760" height="855" viewBox="0 0 32 36">
+  <path d="M16 3 C16 3, 14 6, 16 7.5 C18 6, 16 3, 16 3Z" fill="#4a7828"/>
+  <path d="M11 7 Q8 3, 9 1" fill="none" stroke="#3a6020" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M21 7 Q24 3, 23 1" fill="none" stroke="#3a6020" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M14 6 Q12 2, 14 1" fill="none" stroke="#4a7828" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M18 6 Q20 2, 18 1" fill="none" stroke="#4a7828" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M10 8 Q7 5, 6 4" fill="none" stroke="#3a6020" stroke-width="1" stroke-linecap="round"/>
+  <path d="M22 8 Q25 5, 26 4" fill="none" stroke="#3a6020" stroke-width="1" stroke-linecap="round"/>
+  <path d="M16 8 C10 8, 4 12, 4 18 C4 24, 8 28, 12 28 C13 28, 14 27.5, 15 27 C15.5 28, 16.5 28, 17 27 C18 27.5, 19 28, 20 28 C24 28, 28 24, 28 18 C28 12, 22 8, 16 8Z" fill="#8b2a2a"/>
+  <ellipse cx="10" cy="17" rx="4.5" ry="6" fill="#a03525" opacity="0.7" transform="rotate(-10,10,17)"/>
+  <ellipse cx="21" cy="18" rx="4" ry="5.5" fill="#6b3040" opacity="0.6" transform="rotate(8,21,18)"/>
+  <ellipse cx="16" cy="20" rx="5" ry="4" fill="#944030" opacity="0.5"/>
+  <ellipse cx="14" cy="14" rx="3" ry="4" fill="#c44535" opacity="0.4" transform="rotate(-15,14,14)"/>
+  <path d="M12 9 Q11 18, 12 27" fill="none" stroke="#6b2020" stroke-width="0.6" opacity="0.4"/>
+  <path d="M20 9 Q21 18, 20 27" fill="none" stroke="#6b2020" stroke-width="0.6" opacity="0.4"/>
+  <path d="M16 8 Q16 18, 16 27.5" fill="none" stroke="#6b2020" stroke-width="0.5" opacity="0.3"/>
+  <ellipse cx="11" cy="13" rx="3" ry="2.5" fill="white" opacity="0.14" transform="rotate(-25,11,13)"/>
+  <ellipse cx="19" cy="12" rx="2" ry="1.5" fill="white" opacity="0.08" transform="rotate(15,19,12)"/>
+</svg>
+<div class="rim"></div>
+</body></html>

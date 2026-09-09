@@ -52,6 +52,16 @@ function formatGroceryQty(totalQty, unit) {
 }
 
 app.use(cors(CORS_ORIGIN ? { origin: CORS_ORIGIN } : undefined));
+
+// Shared secret for public deployments (AWS). When API_KEY is set, every /api
+// route except the health probe must carry it as an X-Api-Key header. Unset
+// locally, so the Vite proxy and LAN iPad builds keep working without it.
+const API_KEY = process.env.API_KEY || '';
+app.use('/api', (req, res, next) => {
+  if (!API_KEY || req.method === 'OPTIONS' || req.path === '/health') return next();
+  if (req.get('x-api-key') === API_KEY) return next();
+  res.status(401).json({ error: 'Unauthorized' });
+});
 app.use(express.json({ limit: '1mb' }));
 
 // GET /api/meal-plan?zip=64683&budget=70&servings=1&refresh=false
