@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches backgroundColor in capacitor.config.json and the header in src/App.jsx.
+         Painted behind the WebView, so the status/navigation bar strips blend with the app. -->
+    <color name="mealMakerBackground">#2a1a0e</color>
+</resources>

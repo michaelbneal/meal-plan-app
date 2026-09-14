@@ -169,7 +169,7 @@ export default function LocalDeals({ sales, zip, scrapedAt, radiusMiles, noStore
                   background: 'linear-gradient(180deg, #fefcf6 0%, #f5efe4 50%, #ece4d4 100%)',
                 }}
               >
-                <h3 style={{
+                <h3 className="deal-store-title" style={{
                   fontFamily: 'Cormorant Garamond, serif',
                   fontSize: 24,
                   fontWeight: 700,
@@ -178,7 +178,7 @@ export default function LocalDeals({ sales, zip, scrapedAt, radiusMiles, noStore
                   textTransform: 'uppercase',
                 }}>
                   {store}
-                  <span style={{
+                  <span className="deal-store-dates" style={{
                     fontFamily: 'Cormorant Garamond, serif',
                     fontSize: 18,
                     fontWeight: 700,

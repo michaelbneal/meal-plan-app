@@ -7,5 +7,14 @@
     "contentInset": "never",
     "preferredContentMode": "mobile",
     "backgroundColor": "#2a1a0e"
+  },
+  "android": {
+    "backgroundColor": "#2a1a0e",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK"
+    }
   }
 }

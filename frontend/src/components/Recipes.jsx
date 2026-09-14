@@ -154,8 +154,8 @@ export default function Recipes({ plan, focusTarget, onFocusHandled, onBackToPla
                       </p>
 
                       {/* Recipe name + favorite star */}
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 14 }}>
-                        <h3 style={{
+                      <div className="recipe-title-row" style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 14 }}>
+                        <h3 className="recipe-title" style={{
                           fontFamily: 'Pinyon Script, cursive',
                           fontSize: 30,
                           fontWeight: 400,
@@ -167,6 +167,7 @@ export default function Recipes({ plan, focusTarget, onFocusHandled, onBackToPla
                         </h3>
                         {meal.id && onToggleFavoriteRecipe && (
                           <button
+                            className="recipe-fav"
                             onClick={() => onToggleFavoriteRecipe(meal.id)}
                             title={favoriteSet.has(meal.id) ? 'Remove from favorites' : 'Add to favorites — it will appear in plans more often'}
                             aria-label={favoriteSet.has(meal.id) ? 'Unfavorite recipe' : 'Favorite recipe'}
@@ -189,7 +190,7 @@ export default function Recipes({ plan, focusTarget, onFocusHandled, onBackToPla
                             onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
                             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                           >
-                            <span style={{ fontSize: 46 }}>{favoriteSet.has(meal.id) ? '★' : '☆'}</span>
+                            <span className="recipe-fav-star" style={{ fontSize: 46 }}>{favoriteSet.has(meal.id) ? '★' : '☆'}</span>
                             <span style={{
                               fontFamily: 'Amatic SC, cursive',
                               fontWeight: 700,

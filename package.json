@@ -13,6 +13,10 @@
     "docker:logs": "docker compose logs -f api",
     "ios:sync": "npm run ios:sync --prefix frontend",
     "ios:open": "npm run ios:open --prefix frontend",
+    "android:sync": "npm run android:sync --prefix frontend",
+    "android:open": "npm run android:open --prefix frontend",
+    "android:run": "npm run android:run --prefix frontend",
+    "android:apk": "npm run android:apk --prefix frontend",
     "deploy:aws": "bash infra/aws/deploy.sh"
   }
 }

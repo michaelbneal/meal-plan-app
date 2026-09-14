@@ -268,7 +268,8 @@ main {
   .tagline-icon { width: 22px; height: 22px; }
   .mode-grid { grid-template-columns: 1fr !important; }
 
-  .controls-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px !important; padding: 18px 16px 20px !important; }
+  /* Extra top padding keeps the first row of labels clear of the corner pushpins. */
+  .controls-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px !important; padding: 36px 16px 20px !important; }
   .control-field:nth-of-type(5), .control-field:nth-of-type(6) { grid-column: auto; }
   .control-label { font-size: 18px !important; }
   .control-input { height: 44px; font-size: 18px !important; }
@@ -298,6 +299,22 @@ main {
   .tabs-status { display: none !important; }
 
   .craving-title { font-size: 24px !important; }
+
+  /* Recipe cards: the script title takes the full width and the Favorite
+     button drops under it, instead of both squeezing side by side. */
+  .recipe-title-row { flex-wrap: wrap; }
+  .recipe-title { flex: 1 1 100% !important; font-size: 26px !important; }
+  .recipe-fav { margin-left: auto; padding: 0 4px !important; }
+  .recipe-fav-star { font-size: 32px !important; }
+
+  /* Deals tab: store name on one line, the sale dates on the next. */
+  .deal-store-title { font-size: 20px !important; letter-spacing: 0.2em !important; }
+  .deal-store-dates { display: block; margin-left: 0 !important; font-size: 15px !important; }
+
+  /* Shopping list: let the row wrap so the deal badge moves whole to a
+     second line rather than breaking mid-text. */
+  .grocery-item-main { flex-wrap: wrap; row-gap: 4px; }
+  .grocery-deal-badge { white-space: nowrap; }
 
   .meal-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
   .meal-grid .corner { display: none !important; }
@@ -336,7 +353,7 @@ main {
   box-shadow: 0 0 0 1px rgba(234,162,33,0.4);
 }
 
-/* ─── iOS / Capacitor ─── */
+/* ─── iOS / Android (Capacitor) ─── */
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -350,13 +367,13 @@ body {
 }
 
 /* Body background photo. Desktop pins it with background-attachment: fixed.
-   iOS WebKit ignores fixed attachment and instead stretches a `cover` image to
-   the full document height, so on touch WebKit we paint it on a fixed
-   pseudo-element behind the content instead. */
+   iOS WebKit and Android Chrome/WebView both ignore fixed attachment and instead
+   stretch a `cover` image to the full document height, so on touch devices we
+   paint it on a fixed pseudo-element behind the content instead. */
 .page-bg {
   background: url(/herbs-bg.png) center / cover fixed;
 }
-@supports (-webkit-touch-callout: none) {
+@media (hover: none) and (pointer: coarse) {
   .page-bg {
     background: none;
   }

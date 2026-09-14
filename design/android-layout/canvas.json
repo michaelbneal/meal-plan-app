@@ -1,0 +1,25 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "Pixel phone · 412×915",
+      "x": 0,
+      "y": 0,
+      "w": 412,
+      "h": 6000
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-android-phone",
+      "x": 452,
+      "y": 0,
+      "w": 260,
+      "text": "Android phone 412dp — what ships today\n\nSame web bundle as iOS; the ≤700px rules in index.css drive this layout, so the iPhone and Pixel artboards differ only in width and insets.\n\nInsets\n• Status bar 48dp on a Pixel 10 Pro (camera cutout); ~24–32 on older phones. Header pads by it.\n• Gesture bar 24dp at the bottom.\n• Android 15+ draws edge-to-edge, so scrolled content passes under the status bar text. Open question: add a dark fade under the status bar (both platforms)?\n\nHeader\n• Title 60px, Fresh Ideas 20px / .30em, taglines stacked 16px\n• Mode cards single column\n\nControls\n• 2-column grid, 18px single-line labels, 44dp controls\n• Top padding 36px so ZIP / RADIUS labels clear the corner pins (fixed 9/14)\n• Plan My Week full width, 56dp — below the first screen, same as iPhone\n\nBody\n• Budget bar stacked, price 48px\n• Tabs 14px scroll strip; the active tab scrolls into view\n• Meal grid 2 columns, day name inside the card\n• Recipe cards: script title full width, Favorite under it (fixed 9/14)\n• Shopping list: deal badge wraps whole to a second line (fixed 9/14)\n• Deals: store name, dates on the next line (fixed 9/14)\n\nHardware back: closes a modal → returns to the mode's home tab → backgrounds the app."
+    }
+  ],
+  "launch": {
+    "view": "focused",
+    "file": "Main.dc.html"
+  }
+}

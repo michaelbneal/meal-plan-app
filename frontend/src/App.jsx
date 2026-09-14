@@ -7,10 +7,12 @@ import ExcludeIngredients from './components/ExcludeIngredients.jsx';
 import Recipes from './components/Recipes.jsx';
 import Pushpin, { CornerPins } from './components/Pushpin.jsx';
 import WashiTape from './components/WashiTape.jsx';
+import { Capacitor } from '@capacitor/core';
+import { App as NativeApp } from '@capacitor/app';
 
 // Web dev leaves VITE_API_URL unset so '/api' hits the Vite proxy. The Capacitor
-// iOS build runs from capacitor://localhost, so it needs an absolute URL to the
-// backend container — set VITE_API_URL (see frontend/.env.example) before building.
+// builds (iOS: capacitor://localhost, Android: https://localhost) need an absolute
+// URL to the backend — set VITE_API_URL (see frontend/.env.native.example) before building.
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 const API = `${API_BASE}/api`;
 // Shared secret for the hosted (AWS) backend. Empty for local/LAN builds.
@@ -225,11 +227,27 @@ export default function App() {
 
   // On initial mount, focus the Recipe Planner mode card (always the first one)
   // so Tab navigation starts from there regardless of which mode is saved.
+  // Keyboard-only: on touch devices there is no Tab key to start from.
   useEffect(() => {
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
     const el = modeCardRefs.current['planner'] || modeCardRefs.current[MODES[0].id];
     if (el) el.focus({ preventScroll: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Android hardware back button. Without a listener Capacitor would exit the app
+  // on the first press; instead close whatever is open, fall back to the mode's
+  // home tab, and only then send the app to the background (never kill it).
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'android') return;
+    const homeTab = activeMode.defaultTab;
+    const listener = NativeApp.addListener('backButton', () => {
+      if (showNoStoresModal) setShowNoStoresModal(false);
+      else if (tab !== homeTab) setTab(homeTab);
+      else NativeApp.minimizeApp();
+    });
+    return () => { listener.then((h) => h.remove()); };
+  }, [showNoStoresModal, tab, activeMode.defaultTab]);
 
   // Auto-dismiss the undo toast after 6 seconds.
   useEffect(() => {
@@ -474,11 +492,17 @@ export default function App() {
 
   // On mobile the tab bar is a horizontal scroll strip, so the active tab can sit
   // off-screen (e.g. landing on "Deals Near Me", the last tab). Keep the selected
-  // tab scrolled into view horizontally. block:'nearest' avoids yanking the page
-  // vertically; this is a no-op on desktop where all tabs already fit.
+  // tab centred by scrolling the strip itself, never the page: scrollIntoView with
+  // block:'nearest' still scrolls the page vertically when the strip is below the
+  // fold, which on phones meant the app opened mid-page on first launch.
   useEffect(() => {
     const el = document.querySelector('[role="tab"][aria-selected="true"]');
-    el?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    const row = el?.closest('.tabs-row');
+    if (!el || !row || row.scrollWidth <= row.clientWidth) return;
+    const elRect = el.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    const left = elRect.left - rowRect.left + row.scrollLeft - (row.clientWidth - elRect.width) / 2;
+    row.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
   }, [tab, mode]);
 
   // Recompute grocery list when meals are skipped, using plan data

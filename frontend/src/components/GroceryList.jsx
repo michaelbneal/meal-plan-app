@@ -300,7 +300,7 @@ function ItemRow({ item }) {
       gap: 12,
       opacity: item.onHand ? 0.5 : 1,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+      <div className="grocery-item-main" style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
         <span style={{
           fontFamily: 'Cormorant Garamond, serif',
           fontSize: 15,
@@ -340,7 +340,7 @@ function ItemRow({ item }) {
           </span>
         )}
         {item.onSale && !item.onHand && (
-          <span style={{
+          <span className="grocery-deal-badge" style={{
             background: 'var(--sale)',
             color: '#1a1400',
             fontSize: 12,
