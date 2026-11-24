@@ -503,6 +503,39 @@ export default function App() {
     return () => { cancelled = true; };
   }, [zip, radius]);
 
+  // When the deals on screen were last loaded, however they were loaded.
+  const salesLoadedAtRef = useRef(0);
+  useEffect(() => {
+    if (salesData) salesLoadedAtRef.current = Date.now();
+  }, [salesData]);
+
+  // Reload deals when the app returns to the foreground. Android (and iOS) keep
+  // the web view alive in the background, so without this the deals from hours
+  // ago stayed on screen until the app was force-closed and reopened. Keeps the
+  // old deals visible until the new ones arrive, and leaves an existing plan
+  // alone so the menu doesn't change under the user.
+  useEffect(() => {
+    const STALE_MS = 30 * 60 * 1000;
+    const reloadIfStale = () => {
+      if (!zipIsValid || Date.now() - salesLoadedAtRef.current < STALE_MS) return;
+      apiFetch(`${API}/sales?zip=${zip}&refresh=false&radius=${radius}`)
+        .then(r => (r.ok ? r.json() : null))
+        .then(data => {
+          if (!data?.sales) return;
+          salesFromUserActionRef.current = false;
+          setSalesData(data);
+        })
+        .catch(() => {});
+    };
+    if (Capacitor.isNativePlatform()) {
+      const listener = NativeApp.addListener('resume', reloadIfStale);
+      return () => { listener.then((h) => h.remove()); };
+    }
+    const onVisible = () => { if (document.visibilityState === 'visible') reloadIfStale(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [zip, radius, zipIsValid]);
+
   // No-stores modal disabled — the empty state inside the Deals tab already explains
   // what to do (change Shopping Radius), and the popup was interrupting field entry.
 
