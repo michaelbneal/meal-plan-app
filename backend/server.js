@@ -8,7 +8,6 @@ const app = express();
 // overridden from the container environment (see backend/.env.example).
 const PORT = parseInt(process.env.PORT, 10) || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
-const DEFAULT_ZIP = process.env.DEFAULT_ZIP || '64683';
 // Comma-separated allowlist. Unset = allow any origin, which is what the
 // Capacitor shell (capacitor://localhost) and the Vite dev proxy need.
 const CORS_ORIGIN = process.env.CORS_ORIGIN
@@ -51,6 +50,18 @@ function formatGroceryQty(totalQty, unit) {
   return `${display} ${u}`;
 }
 
+// Every deal/price lookup is location-specific, so a missing or malformed ZIP
+// is a client error. (These endpoints used to fall back to 64683, which quietly
+// served Trenton, MO prices to anyone who hadn't entered a ZIP yet.)
+function requireZip(req, res) {
+  const zip = String(req.query.zip || '').trim();
+  if (!/^\d{5}$/.test(zip)) {
+    res.status(400).json({ error: 'A 5-digit US ZIP code is required.' });
+    return null;
+  }
+  return zip;
+}
+
 app.use(cors(CORS_ORIGIN ? { origin: CORS_ORIGIN } : undefined));
 
 // Shared secret for public deployments (AWS). When API_KEY is set, every /api
@@ -67,7 +78,8 @@ app.use(express.json({ limit: '1mb' }));
 // GET /api/meal-plan?zip=64683&budget=70&servings=1&refresh=false
 app.get('/api/meal-plan', async (req, res) => {
   try {
-    const zip = req.query.zip || DEFAULT_ZIP;
+    const zip = requireZip(req, res);
+    if (!zip) return;
     const budget = req.query.budget ? parseFloat(req.query.budget) : null;
     const servings = req.query.servings ? parseInt(req.query.servings) : 1;
     const forceRefresh = req.query.refresh === 'true';
@@ -110,7 +122,8 @@ app.get('/api/meal-plan', async (req, res) => {
 // GET /api/sales?zip=64683&refresh=false
 app.get('/api/sales', async (req, res) => {
   try {
-    const zip = req.query.zip || DEFAULT_ZIP;
+    const zip = requireZip(req, res);
+    if (!zip) return;
     const forceRefresh = req.query.refresh === 'true';
     const radius = req.query.radius ? parseInt(req.query.radius) : 30;
     const data = await getSales(zip, forceRefresh, radius);
@@ -123,7 +136,8 @@ app.get('/api/sales', async (req, res) => {
 // GET /api/grocery-list?zip=64683&servings=1&exclude=eggs&onhand=olive_oil,oats
 app.get('/api/grocery-list', async (req, res) => {
   try {
-    const zip = req.query.zip || DEFAULT_ZIP;
+    const zip = requireZip(req, res);
+    if (!zip) return;
     const servings = req.query.servings ? parseInt(req.query.servings) : 1;
 
     const radius = req.query.radius ? parseInt(req.query.radius) : 30;
@@ -216,7 +230,8 @@ app.get('/api/grocery-list', async (req, res) => {
 // GET /api/recipes — all available recipes by type
 app.get('/api/recipes', async (req, res) => {
   try {
-    const zip = req.query.zip || DEFAULT_ZIP;
+    const zip = requireZip(req, res);
+    if (!zip) return;
     const servings = req.query.servings ? parseInt(req.query.servings) : 1;
     const radius = req.query.radius ? parseInt(req.query.radius) : 30;
     const exclude = req.query.exclude ? req.query.exclude.split(',') : [];

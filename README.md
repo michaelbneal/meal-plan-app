@@ -20,7 +20,6 @@ Scraped sales are cached in the `sales_cache` named volume (`/data` inside the c
 |---|---|---|
 | `PORT` / `HOST` | `3001` / `0.0.0.0` | Listen address |
 | `CACHE_DIR` | `/data` in the image | Where sales/store lookups are cached |
-| `DEFAULT_ZIP` | `64683` | ZIP used when a request omits one |
 | `CORS_ORIGIN` | unset (allow all) | Comma-separated allowlist |
 | `APP_VERSION` | `dev` | Echoed by `/api/health` |
 

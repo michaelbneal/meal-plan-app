@@ -5,7 +5,7 @@
 #   API_KEY=<secret> ./infra/aws/deploy.sh
 #
 # Env knobs: AWS_REGION (default: CLI config), APP_NAME (meal-maker-api),
-#            TAG (git short sha), DEFAULT_ZIP (64683), CPU ("0.25 vCPU"), MEMORY ("0.5 GB")
+#            TAG (git short sha), CPU ("0.25 vCPU"), MEMORY ("0.5 GB")
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
@@ -17,7 +17,6 @@ AWS_REGION=${AWS_REGION:-$(aws configure get region 2>/dev/null || true)}
 : "${AWS_REGION:?AWS_REGION is not set and no default region is configured (aws configure)}"
 : "${API_KEY:?API_KEY is required — the shared secret the iOS app sends as X-Api-Key}"
 TAG=${TAG:-$(git rev-parse --short HEAD 2>/dev/null || date +%Y%m%d%H%M)}
-DEFAULT_ZIP=${DEFAULT_ZIP:-64683}
 CPU=${CPU:-"0.25 vCPU"}
 MEMORY=${MEMORY:-"0.5 GB"}
 
@@ -62,7 +61,6 @@ cat > "$SOURCE_CFG" <<JSON
         "PORT": "3001",
         "HOST": "0.0.0.0",
         "CACHE_DIR": "/data",
-        "DEFAULT_ZIP": "$DEFAULT_ZIP",
         "API_KEY": "$API_KEY",
         "APP_VERSION": "$TAG"
       }
